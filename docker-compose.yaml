@@ -21,6 +21,37 @@ services:
     networks:
       - app-network
 
+  app:
+    build:
+      context: ./app
+    ports:
+      - 8000:8000
+    volumes:
+      - ./app:/app
+    networks:
+      - app-network
+    env_file:
+      - ./app/.env
+    depends_on:
+      - db
+  
+  db-migrate:
+    build:
+      context: ./app
+    ports:
+      - 8000:8000
+    volumes:
+      - ./app:/app
+    networks:
+      - app-network
+    env_file:
+      - ./app/.env
+    depends_on:
+      - db
+    profiles:
+      - tools
+    command: ["python", "manage.py", "migrate"]
+
 networks:
   app-network:
     driver: bridge
